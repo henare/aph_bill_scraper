@@ -45,13 +45,16 @@ def get_bill(house, id)
 end
 
 
-house = "representatives"
-bill_id = (ScraperWikiMorph.select("max(id) from data where house='#{house}'").first['max(id)'] || 1 rescue 1)
+["representatives", "senate"].each do |house|
+  bill_id = (ScraperWikiMorph.select("max(id) from data where house='#{house}'").first['max(id)'] || 1 rescue 1)
+  puts "*** Getting #{house} bills, starting at #{bill_id}"
 
-# Stop after 250 pages with no bill found. This might sound excessive
-# but from what I can tell Representative bill IDs start at R240 and Senate at S111
-while @bill_not_found_count <= 250
-  get_bill(house, bill_id)
-  bill_id += 1
+  # Stop after 250 pages with no bill found. This might sound excessive
+  # but from what I can tell Representative bill IDs start at R240 and Senate at S111
+  while @bill_not_found_count <= 250
+    get_bill(house, bill_id)
+    bill_id += 1
+  end
+  puts "*** Finished getting #{house} bills"
+  @bill_not_found_count = 0
 end
-
