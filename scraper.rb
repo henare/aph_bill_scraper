@@ -50,7 +50,7 @@ end
   puts "*** Getting #{house} bills, starting at #{bill_id}"
 
   # Stop after 250 pages with no bill found. This might sound excessive
-  # but from what I can tell Representative bill IDs start at R240 and Senate at S111
+  # but from what I've found some really big gaps
   while @bill_not_found_count <= 250
     get_bill(house, bill_id)
     bill_id += 1
