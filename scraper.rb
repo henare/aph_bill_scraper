@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require 'mechanize'
 require 'scraperwiki-morph'
 
