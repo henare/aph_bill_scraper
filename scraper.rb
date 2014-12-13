@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'mechanize'
-require 'scraperwiki-morph'
+require 'scraperwiki'
 
 @agent = Mechanize.new
 @base_url = 'http://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId='
