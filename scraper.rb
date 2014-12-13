@@ -15,7 +15,7 @@ def get_bill(house, id)
 
   url = @base_url + aph_id
   page = @agent.get url
-  title = page.at('#content').at(:h1).inner_text.strip
+  title = page.at('#container').at(:h1).inner_text.strip
 
   if title == 'Bill not found'
     puts "Bill not found for #{aph_id}"
