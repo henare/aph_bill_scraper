@@ -13,12 +13,19 @@ def get_bill(id)
 
   url = @base_url + id
   page = @agent.get url
+  title = page.at('#content').at(:h1).inner_text.strip
+
+  if title == 'Bill not found'
+    puts "Bill not found for #{id}"
+    return
+  end
+
   bill_details = page.at('dl.specs').search(:dd).map { |e| e.inner_text.strip }
 
   bill = {
     id: id,
     url: url,
-    title: page.at('#content').at(:h1).inner_text,
+    title: title,
     type: bill_details[0],
     portfolio: bill_details[1],
     originating_house: bill_details[2],
