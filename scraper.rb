@@ -8,7 +8,7 @@ require 'scraperwiki'
 
 def get_bill(house, id)
   aph_id = house[0].upcase + id.to_s
-  if (!ScraperWikiMorph.select("aph_id from data where aph_id='#{aph_id}'").empty? rescue false)
+  if (!ScraperWiki.select("aph_id from data where aph_id='#{aph_id}'").empty? rescue false)
     puts "Skipping already saved bill #{aph_id}"
     return
   end
@@ -40,13 +40,13 @@ def get_bill(house, id)
   }
 
   puts "Saving bill #{aph_id}"
-  ScraperWikiMorph.save_sqlite([:aph_id], bill)
+  ScraperWiki.save_sqlite([:aph_id], bill)
   @bill_not_found_count = 0
 end
 
 
 ["representatives", "senate"].each do |house|
-  bill_id = (ScraperWikiMorph.select("max(id) from data where house='#{house}'").first['max(id)'] || 1 rescue 1)
+  bill_id = (ScraperWiki.select("max(id) from data where house='#{house}'").first['max(id)'] || 1 rescue 1)
   puts "*** Getting #{house} bills, starting at #{bill_id}"
 
   # Stop after 250 pages with no bill found. This might sound excessive
