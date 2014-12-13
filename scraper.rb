@@ -4,19 +4,22 @@ require 'scraperwiki-morph'
 
 @agent = Mechanize.new
 @base_url = 'http://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId='
+@bill_not_found_count = 0
 
-def get_bill(id)
-  if (!ScraperWikiMorph.select("id from data where id='#{id}'").empty? rescue false)
-    puts "Skipping already saved bill #{id}"
+def get_bill(house, id)
+  aph_id = house[0].upcase + id.to_s
+  if (!ScraperWikiMorph.select("aph_id from data where aph_id='#{aph_id}'").empty? rescue false)
+    puts "Skipping already saved bill #{aph_id}"
     return
   end
 
-  url = @base_url + id
+  url = @base_url + aph_id
   page = @agent.get url
   title = page.at('#content').at(:h1).inner_text.strip
 
   if title == 'Bill not found'
-    puts "Bill not found for #{id}"
+    puts "Bill not found for #{aph_id}"
+    @bill_not_found_count += 1
     return
   end
 
@@ -24,6 +27,8 @@ def get_bill(id)
 
   bill = {
     id: id,
+    house: house,
+    aph_id: aph_id,
     url: url,
     title: title,
     type: bill_details[0],
@@ -34,8 +39,19 @@ def get_bill(id)
     summary: bill_details[5],
   }
 
-  puts "Saving bill #{id}"
-  ScraperWikiMorph.save_sqlite([:id], bill)
+  puts "Saving bill #{aph_id}"
+  ScraperWikiMorph.save_sqlite([:aph_id], bill)
+  @bill_not_found_count = 0
 end
 
-get_bill("R3001")
+
+house = "representatives"
+bill_id = (ScraperWikiMorph.select("max(id) from data where house='#{house}'").first['max(id)'] || 1 rescue 1)
+
+# Stop after 250 pages with no bill found. This might sound excessive
+# but from what I can tell Representative bill IDs start at R240 and Senate at S111
+while @bill_not_found_count <= 250
+  get_bill(house, bill_id)
+  bill_id += 1
+end
+
