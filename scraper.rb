@@ -51,8 +51,7 @@ end
 
   # Stop after 250 pages with no bill found. This might sound excessive
   # but from what I've found some really big gaps
-  # TODO: Bump this back down - I found a gap of almost 1000 IDs!
-  while @bill_not_found_count <= 1000
+  while @bill_not_found_count <= 250
     get_bill(house, bill_id)
     bill_id += 1
   end
