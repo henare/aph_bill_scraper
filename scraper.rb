@@ -6,7 +6,7 @@ require 'scraperwiki'
 @base_url = 'http://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId='
 @bill_not_found_count = 0
 
-BROKEN_BILL_IDS = ["R4221"]
+BROKEN_BILL_IDS = ["R4221", "R4468"]
 
 def get_bill(house, id)
   aph_id = house[0].upcase + id.to_s
