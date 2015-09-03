@@ -6,8 +6,16 @@ require 'scraperwiki'
 @base_url = 'http://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId='
 @bill_not_found_count = 0
 
+BROKEN_BILL_IDS = ["R4221"]
+
 def get_bill(house, id)
   aph_id = house[0].upcase + id.to_s
+
+  if BROKEN_BILL_IDS.include? aph_id
+    puts "Skipping broken bill page: #{aph_id}"
+    return
+  end
+
   if (!ScraperWiki.select("aph_id from data where aph_id='#{aph_id}'").empty? rescue false)
     puts "Skipping already saved bill #{aph_id}"
     return
